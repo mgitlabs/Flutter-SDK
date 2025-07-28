@@ -1,0 +1,31 @@
+name: 🔨 Flutter APK Builder
+
+on:
+  push:
+    branches: [master]
+
+jobs:
+  build-apk:
+    if: contains(github.event.head_commit.message, 'apkbuild')
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 🔁 Checkout source code
+        uses: actions/checkout@v3
+
+      - name: 💾 Install Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.19.6'
+
+      - name: 📦 Get Dependencies
+        run: flutter pub get
+
+      - name: 🛠️ Build APK
+        run: flutter build apk --release
+
+      - name: ☁️ Upload APK Artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: Flutter-Release-APK
+          path: build/app/outputs/flutter-apk/app-release.apk
